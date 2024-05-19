@@ -11,31 +11,36 @@ import json
 from dateutil import parser
 chromedriver_autoinstaller.install()
 
-basePath = 'https://www.twitter.com/'
+basePath = 'https://www.x.com/'
 logger = logging.getLogger("scrape_x")
 chrome_options = Options()
+prefs = {
+    "intl.accept_languages": "en,en_US"
+}
+chrome_options.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(options=chrome_options)
 
 
 def login(driver:webdriver.Chrome, username: str, password: str):
-    url = basePath + 'login'
+    url = basePath + 'i/flow/login'
     driver.get(url)
     wait = WebDriverWait(driver, 20)
     try:
-        next_button_path = '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[6]'
-        login_button_path = '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div'
+        # next_button_path = '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[6]'
+        next_button_path =    '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/button[2]'
+        login_button_path = '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/button'
         password_input_path = '[autocomplete="current-password"]'
 
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[autocomplete="username"]'))).send_keys(username)
         next_button = wait.until(EC.presence_of_element_located((By.XPATH, next_button_path)))
         next_button.click()
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, password_input_path)),timeout=3).send_keys(password)
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, password_input_path))).send_keys(password)
         login_button = wait.until(EC.presence_of_element_located((By.XPATH, login_button_path)))
         login_button.click()
         
-        wait.until(EC.url_to_be("https://twitter.com/home"),timeout=3)
+        wait.until(EC.url_to_be("https://x.com/home"))
         
-        if driver.current_url == "https://twitter.com/home":
+        if driver.current_url == "https://x.com/home":
             return True
         else:
             logger.error("Unexpected URL after login")
@@ -62,7 +67,6 @@ def collect_user_info(driver:webdriver.Chrome, username: str):
 
         json_str = element.get_attribute("innerText")
         profile = json.loads(json_str)
-        driver.close()
         
         author = profile.get('author', {})
         interaction_statistic = author.get('interactionStatistic', [])
@@ -86,12 +90,10 @@ def collect_user_info(driver:webdriver.Chrome, username: str):
 
     except:
         print("Timed out waiting for elements to appear")
-        driver.close()
         return {}
 
     
-def collect_tweets_of_user(driver:webdriver.Chrome, username: str, n:int):
-    
+def collect_tweets_of_user(driver:webdriver.Chrome, username: str, n:int):    
     url = basePath + username
     driver.get(url)
     collected_elements = []
@@ -125,5 +127,78 @@ def collect_tweets_of_user(driver:webdriver.Chrome, username: str, n:int):
                 break 
         except:
             break 
-    driver.close()
+    # driver.close()
     return collected_text
+
+def collect_following(driver:webdriver.Chrome, username: str, n:int):
+        url = basePath + username +'/following'
+        driver.get(url)
+        collected_usernames = []
+        collected_elements = []
+        xpath_expression = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div[1]/div/div/button/div/div[2]/div[1]/div[1]/div/div[2]/div/a/div/div/span'
+        while True:
+            try:
+                elements = WebDriverWait(driver, 1000).until(EC.presence_of_all_elements_located((By.XPATH, xpath_expression)))
+                initial_scroll_position = driver.execute_script("return window.scrollY;")
+
+                
+                for element in elements:
+                    if len(collected_usernames) >= n:
+                        break 
+                    if element not in collected_elements:
+                        text = element.text.strip()
+                        collected_elements.append(element)
+                    if text:
+                        if text[1:] not in collected_usernames:
+                            collected_usernames.append(text[1:])
+                        
+                driver.execute_script("window.scrollTo(0, arguments[0]);", initial_scroll_position)
+                driver.execute_script("window.scrollBy(0, window.innerHeight);")
+
+                if len(collected_usernames) >= n:
+                    break 
+            except Exception as e:
+                logger.error(f"Error during collecting following: {str(e)}")
+                continue 
+        user_infos = []
+        for username in collected_usernames:
+            user_info = collect_user_info(driver, username)
+            user_infos.append(user_info)
+        return user_infos
+    
+
+
+def collect_followers(driver:webdriver.Chrome, username: str, n:int):
+        url = basePath + username +'/followers'
+        driver.get(url)
+        collected_usernames = []
+        collected_elements = []
+        xpath_expression = '//*[@data-testid="UserCell"]/div/div[2]/div/div/div/div[2]//span'
+        while True:
+            try:
+                elements = WebDriverWait(driver, 1000).until(EC.presence_of_all_elements_located((By.XPATH, xpath_expression)))
+                initial_scroll_position = driver.execute_script("return window.scrollY;")
+                for element in elements:
+                    if len(collected_usernames) >= n:
+                        break 
+                    if element not in collected_elements:
+                        text = element.text.strip()
+                        collected_elements.append(element)
+                    if text:
+                        if text[0] == '@' and text[1:] != username:
+                            if text[1:] not in collected_usernames:
+                                collected_usernames.append(text[1:])
+                        
+                driver.execute_script("window.scrollTo(0, arguments[0]);", initial_scroll_position)
+                driver.execute_script("window.scrollBy(0, window.innerHeight);")
+
+                if len(collected_usernames) >= n:
+                    break 
+            except Exception as e:
+                logger.error(f"Error during collecting following: {str(e)}")
+                continue 
+        user_infos = []
+        for username in collected_usernames:
+            user_info = collect_user_info(driver, username)
+            user_infos.append(user_info)
+        return user_infos
