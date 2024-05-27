@@ -26,7 +26,6 @@ def login(driver:webdriver.Chrome, username: str, password: str):
     driver.get(url)
     wait = WebDriverWait(driver, 20)
     try:
-        # next_button_path = '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[6]'
         next_button_path =    '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/button[2]'
         login_button_path = '//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/button'
         password_input_path = '[autocomplete="current-password"]'
@@ -93,7 +92,7 @@ def collect_user_info(driver:webdriver.Chrome, username: str):
         return {}
 
     
-def collect_tweets_of_user(driver:webdriver.Chrome, username: str, n:int):    
+def collect_posts_of_user(driver:webdriver.Chrome, username: str, n:int):    
     url = basePath + username
     driver.get(url)
     collected_elements = []
@@ -127,7 +126,6 @@ def collect_tweets_of_user(driver:webdriver.Chrome, username: str, n:int):
                 break 
         except:
             break 
-    # driver.close()
     return collected_text
 
 def collect_following(driver:webdriver.Chrome, username: str, n:int):
@@ -158,7 +156,6 @@ def collect_following(driver:webdriver.Chrome, username: str, n:int):
                 if len(collected_usernames) >= n:
                     break 
             except Exception as e:
-                logger.error(f"Error during collecting following: {str(e)}")
                 continue 
         user_infos = []
         for username in collected_usernames:
@@ -195,7 +192,6 @@ def collect_followers(driver:webdriver.Chrome, username: str, n:int):
                 if len(collected_usernames) >= n:
                     break 
             except Exception as e:
-                logger.error(f"Error during collecting following: {str(e)}")
                 continue 
         user_infos = []
         for username in collected_usernames:
