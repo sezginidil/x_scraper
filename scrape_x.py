@@ -133,7 +133,7 @@ def collect_following(driver:webdriver.Chrome, username: str, n:int):
         driver.get(url)
         collected_usernames = []
         collected_elements = []
-        xpath_expression = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div[1]/div/div/button/div/div[2]/div[1]/div[1]/div/div[2]/div/a/div/div/span'
+        xpath_expression = '//*[@data-testid="cellInnerDiv"]/div/div/button/div/div[2]/div[1]/div[1]/div/div[2]/div/a/div/div/span'
         while True:
             try:
                 elements = WebDriverWait(driver, 1000).until(EC.presence_of_all_elements_located((By.XPATH, xpath_expression)))
@@ -164,13 +164,12 @@ def collect_following(driver:webdriver.Chrome, username: str, n:int):
         return user_infos
     
 
-
 def collect_followers(driver:webdriver.Chrome, username: str, n:int):
         url = basePath + username +'/followers'
         driver.get(url)
         collected_usernames = []
         collected_elements = []
-        xpath_expression = '//*[@data-testid="UserCell"]/div/div[2]/div/div/div/div[2]//span'
+        xpath_expression = '//*[@data-testid="cellInnerDiv"]/div/div/button/div/div[2]/div[1]/div[1]/div/div[2]/div/a/div/div/span'
         while True:
             try:
                 elements = WebDriverWait(driver, 1000).until(EC.presence_of_all_elements_located((By.XPATH, xpath_expression)))

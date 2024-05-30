@@ -19,8 +19,8 @@ This function logs into the web application using the provided username and pass
 
 **Parameters:**
 - `driver` (webdriver.Chrome): The Chrome WebDriver instance used to interact with the browser.
-- `username` (str): The username for logging into the web application.
-- `password` (str): The password for logging into the web application.
+- `username` (str): The username for logging into the web application. 4-15 characters Letters A-Z Numbers 0-9 Underscore symbol.
+- `password` (str): The password for logging into the web application. Min 8 characters.
 
 **Returns:**
 - `bool`: Returns `True` if the login was successful, `False` otherwise.
@@ -31,11 +31,11 @@ This function collects user information from the web application for the specifi
 
 **Parameters:**
 - `driver` (webdriver.Chrome): The Chrome WebDriver instance used to interact with the browser.
-- `username` (str): The username for which to collect information.
+- `username` (str): The username for which to collect information. 4-15 characters Letters A-Z Numbers 0-9 Underscore symbol.
 
 **Returns:**
 - `dict`: A dictionary containing the user's information with the following keys:
-  - `given_name` (str): The user's given name.
+  - `given_name` (str): The user's given name. Usually consists of first name and surname.
   - `user_bio` (str): The user's biography.
   - `user_location` (str): The user's location.
   - `number_of_followers` (int): The number of followers the user has.
@@ -51,7 +51,7 @@ This function collects the latest n posts from the specified user.
 
 **Parameters:**
 - `driver` (*webdriver.Chrome*): The Chrome WebDriver instance used to interact with the browser.
-- `username` (*str*): The username for which to collect posts.
+- `username` (*str*): The username for which to collect posts. 4-15 characters Letters A-Z Numbers 0-9 Underscore symbol.
 - `n` (*int*): The number of posts to collect.
 
 **Returns:**
@@ -63,7 +63,7 @@ This function collects the information of the users followed by the specified us
 
 **Parameters:**
 - `driver` (*webdriver.Chrome*): The Chrome WebDriver instance used to interact with the browser.
-- `username` (*str*): The username for which to collect the following list.
+- `username` (*str*): The username for which to collect the following list. 4-15 characters Letters A-Z Numbers 0-9 Underscore symbol.
 - `n` (*int*): The number of users to collect from the following list.
 
 **Returns:**
@@ -75,8 +75,8 @@ This function collects the information of the users followed by the specified us
   - `number_of_following` (*int*): The number of users the user is following.
   - `number_of_posts` (*int*): The number of posts the user has made.
   - `user_website` (*str or None*): The user's website URL.
-  - `username` (*str*): The username.
-  - `user_join_date` (*str*): The date the user joined.
+  - `username` (*str*): The username. 
+  - `user_join_date` (*str*): The date the user joined -> 'dd/mm/yyyy'
 
 ### `collect_followers(driver: webdriver.Chrome, username: str, n: int) -> list[dict]`
 
@@ -84,7 +84,7 @@ This function collects the information of the followers of the specified user.
 
 **Parameters:**
 - `driver` (*webdriver.Chrome*): The Chrome WebDriver instance used to interact with the browser.
-- `username` (*str*): The username for which to collect the followers list.
+- `username` (*str*): The username for which to collect the followers list. 4-15 characters Letters A-Z Numbers 0-9 Underscore symbol.
 - `n` (*int*): The number of followers to collect.
 
 **Returns:**
@@ -97,7 +97,7 @@ This function collects the information of the followers of the specified user.
   - `number_of_posts` (*int*): The number of posts the user has made.
   - `user_website` (*str or None*): The user's website URL.
   - `username` (*str*): The username.
-  - `user_join_date` (*str*): The date the user joined.
+  - `user_join_date` (*str*): The date the user joined -> 'dd/mm/yyyy'
 
 
 ## Example Usage
