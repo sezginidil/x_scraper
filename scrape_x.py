@@ -1,7 +1,5 @@
-from curses import KEY_ENTER
 from selenium import webdriver
 import logging
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
