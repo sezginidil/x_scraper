@@ -57,6 +57,30 @@ This function collects the latest n posts from the specified user.
 **Returns:**
 - `list[str]`: A list of strings, each representing the text of the post from the user.
 
+### `collect_posts_with_keyword(driver: webdriver.Chrome, keyword: str, n: int) -> list[str]`
+
+This function collects the latest n posts with the given keyword. The result posts may or may not include the given keyword.
+
+**Parameters:**
+- `driver` (*webdriver.Chrome*): The Chrome WebDriver instance used to interact with the browser.
+- `keyword` (*str*): Related keyword. 
+- `n` (*int*): The number of posts to collect.
+
+**Returns:**
+- `list[str]`: A list of strings, each representing the text of the post from the user.
+
+### `collect_posts_with_hashtag(driver: webdriver.Chrome, hashtag: str, n: int) -> list[str]`
+
+This function collects the latest n posts with the given hashtag. The result posts include the given hashtag.
+
+**Parameters:**
+- `driver` (*webdriver.Chrome*): The Chrome WebDriver instance used to interact with the browser.
+- `hashtag` (*str*): Related hashtag. Use it without the "#" symbol in the beginning. The function automatically adds the symbol.
+- `n` (*int*): The number of posts to collect.
+
+**Returns:**
+- `list[str]`: A list of strings, each representing the text of the post from the user.
+
 ### `collect_following(driver: webdriver.Chrome, username: str, n: int) -> list[dict]`
 
 This function collects the information of the users followed by the specified user.
@@ -198,6 +222,30 @@ print(followers)
 #     'username': 'MSuzman',
 #     'user_join_date': '19.04.2010'
 #   }
+# ]
+
+posts_with_keyword = scrape_x.collect_posts_with_keyword(scrape_x.driver,"tiktok",5)
+print(posts_with_keyword)
+
+# Example output:
+# [
+#   "Post 1 content",
+#   "Post 2 content",
+#   "Post 3 content",
+#   "Post 4 content",
+#   "Post 5 content"
+# ]
+
+posts_with_hashtag = scrape_x.collect_posts_with_hashtag(scrape_x.driver,"science",5)
+print(posts_with_hashtag)
+
+# Example output:
+# [
+#   "Post 1 content",
+#   "Post 2 content",
+#   "Post 3 content",
+#   "Post 4 content",
+#   "Post 5 content"
 # ]
 
 driver.quit()

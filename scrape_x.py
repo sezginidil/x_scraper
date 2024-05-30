@@ -1,3 +1,4 @@
+from curses import KEY_ENTER
 from selenium import webdriver
 import logging
 from selenium.webdriver.chrome.service import Service
@@ -6,6 +7,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 import chromedriver_autoinstaller
 import json
 from dateutil import parser
@@ -197,3 +200,85 @@ def collect_followers(driver:webdriver.Chrome, username: str, n:int):
             user_info = collect_user_info(driver, username)
             user_infos.append(user_info)
         return user_infos
+
+def collect_posts_with_keyword(driver:webdriver.Chrome, keyword: str, n:int):
+    url = basePath + 'home'
+    driver.get(url)
+    actions = ActionChains(driver)
+    wait = WebDriverWait(driver, 200)
+    collected_elements = []
+    collected_text = []
+
+    xpath_expression = '//*[@data-testid="tweetText"]'
+
+    try:
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[autocomplete="off"]'))).send_keys(keyword)
+        actions.send_keys(Keys.ENTER)
+        actions.perform()
+        while True:
+            try:
+                elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath_expression)))
+
+                initial_scroll_position = driver.execute_script("return window.scrollY;")
+
+                for element in elements:
+                    if len(collected_text) >= n:
+                        break 
+                    if element not in collected_elements:
+                        text = element.text.strip()
+                        collected_elements.append(element)
+                    if text:
+                        if text not in collected_text:
+                            collected_text.append(text)
+                        
+                driver.execute_script("window.scrollTo(0, arguments[0]);", initial_scroll_position)
+                driver.execute_script("window.scrollBy(0, window.innerHeight);")
+
+                if len(collected_text) >= n:
+                    break 
+            except:
+                break 
+        return collected_text
+    except:
+        return False
+
+def collect_posts_with_hashtag(driver:webdriver.Chrome, hastag: str, n:int):
+    url = basePath + 'home'
+    driver.get(url)
+    actions = ActionChains(driver)
+    wait = WebDriverWait(driver, 200)
+    collected_elements = []
+    collected_text = []
+
+    xpath_expression = '//*[@data-testid="tweetText"]'
+
+    try:
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[autocomplete="off"]'))).send_keys("#"+hastag)
+        actions.send_keys(Keys.ENTER)
+        actions.perform()
+        while True:
+            try:
+                elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath_expression)))
+
+                initial_scroll_position = driver.execute_script("return window.scrollY;")
+
+                for element in elements:
+                    if len(collected_text) >= n:
+                        break 
+                    if element not in collected_elements:
+                        text = element.text.strip()
+                        collected_elements.append(element)
+                    if text:
+                        if text not in collected_text:
+                            collected_text.append(text)
+                        
+                driver.execute_script("window.scrollTo(0, arguments[0]);", initial_scroll_position)
+                driver.execute_script("window.scrollBy(0, window.innerHeight);")
+
+                if len(collected_text) >= n:
+                    break 
+            except:
+                break 
+        return collected_text
+    except:
+        return False

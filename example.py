@@ -21,4 +21,11 @@ print(user_followings)
 followers = scrape_x.collect_followers(scrape_x.driver,"BillGates",5)
 print(followers)
 
+posts_with_keyword = scrape_x.collect_posts_with_keyword(scrape_x.driver,"tiktok",5)
+print(posts_with_keyword)
+
+posts_with_hashtag = scrape_x.collect_posts_with_hashtag(scrape_x.driver,"science",5)
+print(posts_with_hashtag)
+
 driver.quit()
+
