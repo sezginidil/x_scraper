@@ -67,7 +67,7 @@ This function collects the latest n posts with the given keyword. The result pos
 - `n` (*int*): The number of posts to collect.
 
 **Returns:**
-- `list[str]`: A list of strings, each representing the text of the post from the user.
+- `list[str]`: A list of strings, each representing the text of the post related to given keyword.
 
 ### `collect_posts_with_hashtag(driver: webdriver.Chrome, hashtag: str, n: int) -> list[str]`
 
@@ -79,7 +79,7 @@ This function collects the latest n posts with the given hashtag. The result pos
 - `n` (*int*): The number of posts to collect.
 
 **Returns:**
-- `list[str]`: A list of strings, each representing the text of the post from the user.
+- `list[str]`: A list of strings, each representing the text of the post with the given hashtag.
 
 ### `collect_following(driver: webdriver.Chrome, username: str, n: int) -> list[dict]`
 
